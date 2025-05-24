@@ -1,0 +1,33 @@
+# .gitignore
+# Docker
+.docker/
+.env
+volumes/
+*.sqlite3
+db/*.sqlite3
+tmp/
+log/
+.DS_Store
+.vscode/
+
+# Ruby/Rails
+.bundle/
+vendor/bundle/
+/config/master.key
+/config/credentials.yml.enc
+/config/storage.yml
+/config/environments/development.rb
+/config/environments/test.rb
+/public/assets
+/public/packs
+/public/uploads
+/node_modules
+/.byebug_history
+/.irb_history
+/.rspec
+/.rubocop_todo.yml
+/spec/examples.txt
+
+# IDEs
+.idea/
+*.swp
