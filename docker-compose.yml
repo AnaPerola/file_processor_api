@@ -8,7 +8,6 @@ services:
       - bundle_data:/usr/local/bundle
     environment:
       RAILS_ENV: development
-      DATABASE_URL: postgresql://postgres:password@db:5432/files_processor_api
     depends_on:
       - db
     stdin_open: true

@@ -6,7 +6,7 @@ default: &default
 development:
   <<: *default
   database: files_processor_api
-  username: <%= ENV['POSTGRES_USER'] || 'postgres
+  username: <%= ENV['POSTGRES_USER'] || 'postgres' %>
   password: <%= ENV['POSTGRES_PASSWORD'] || 'password' %>
   host: db
   port: 5432
@@ -14,7 +14,7 @@ development:
 test:
   <<: *default
   database: files_processor_api_test
-  username: <%= ENV['POSTGRES_USER'] || 'postgres
+  username: <%= ENV['POSTGRES_USER'] || 'postgres' %>
   password: <%= ENV['POSTGRES_PASSWORD'] || 'password' %>
   host: db
   port: 5432
