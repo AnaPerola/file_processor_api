@@ -7,12 +7,20 @@ module Api
         return render_missing_file_error unless file_present?
 
         result = ProcessFileService.call(params[:file])
-
-        if result[:error]
-          render json: result, status: :bad_request
+        binding.pry
+        if result.is_a?(Hash) && result[:error]
+          render json: { error: result[:error] }, status: :bad_request
         else
-          render json: result
+          render json: { 
+            message: 'File processed successfully', 
+            data: result 
+          }, status: :ok
         end
+      rescue StandardError => e
+        Rails.logger.error "Error processing file: #{e.message}"
+        render json: { 
+          error: 'Internal server error while processing file' 
+        }, status: :internal_server_error
       end
 
       private
