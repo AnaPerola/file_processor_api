@@ -6,8 +6,12 @@ module Api
       def process_file
         return render_missing_file_error unless file_present?
 
-        result = ProcessFileService.call(params[:file])
-        binding.pry
+        order_ids = params[:order_ids]&.split(',')&.map(&:to_i)
+        start_date = params[:start_date]
+        end_date = params[:end_date]
+
+        result = ProcessFileService.call(params[:file], order_ids: order_ids, start_date: start_date, end_date: end_date)
+
         if result.is_a?(Hash) && result[:error]
           render json: { error: result[:error] }, status: :bad_request
         else

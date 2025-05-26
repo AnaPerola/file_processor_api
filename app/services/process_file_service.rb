@@ -1,14 +1,20 @@
 # frozen_string_literal: true
+
 class ProcessFileService
- def initialize(file)
+  attr_reader :order_ids, :start_date, :end_date
+
+ def initialize(file, order_ids: nil, start_date: nil, end_date: nil)
     @file = file.is_a?(ActionDispatch::Http::UploadedFile) ? file : file[:file]
+    @order_ids = order_ids
+    @start_date = start_date
+    @end_date = end_date
   end
 
-  def self.call(file)
-    new(file).process
+  def self.call(file, order_ids: nil, start_date: nil, end_date: nil)
+    new(file, order_ids: order_ids, start_date: start_date, end_date: end_date).process
   end
 
-  def process
+  def process(order_ids: nil, start_date: nil, end_date: nil)
     return { error: 'File is not present' } unless @file
 
     grouped_orders = group_orders(parse_lines)
@@ -58,11 +64,11 @@ class ProcessFileService
     format('%.2f', total)
   end
 
-   def parse_lines
+   def parse_lines(order_id: nil, start_date: nil, end_date: nil)
     @file.read.split("\n").filter_map do |line|
       next if line.strip.empty?
 
-      {
+      parsed_line = {
         user_id: extract_int(line[0, 10]),
         name: line[10, 45].strip,
         order_id: extract_int(line[55, 10]),
@@ -70,6 +76,20 @@ class ProcessFileService
         product_value: parse_value(line[75, 12]),
         date: parse_date(line[87, 8])
       }
+
+      if order_ids && !order_ids.include?(parsed_line[:order_id])
+        next
+      end
+
+      if start_date && parsed_line[:date] < start_date
+        next
+      end
+
+      if end_date && parsed_line[:date] > end_date
+        next
+      end
+
+      parsed_line
     end
   end
 
