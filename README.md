@@ -60,3 +60,7 @@ bundle exec rspec spec/controller/
 # Com documentação
 bundle exec rspec --format documentation
 ```
+
+## 📚 Documentação
+
+- [📖 Documentação da API](docs/API_DOCUMENTATION.md)
