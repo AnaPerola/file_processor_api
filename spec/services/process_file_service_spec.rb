@@ -27,8 +27,8 @@ RSpec.describe ProcessFileService do
       result = described_class.call(file)
 
       expect(result).to be_an(Array)
-      expect(result.size).to eq(200) # 2 users expected
-      expect(result.first[:orders].first[:products].size).to eq(2) # John Doe tem 2 produtos no pedido
+      expect(result.size).to eq(200)
+      expect(result.first[:orders].first[:products].size).to eq(2)
     end
   end
 
