@@ -1,22 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe ProcessFileService do
-  let(:file_content) do
-    <<~DATA
-      0000000123|John Doe                      |0000000001|0000000001|00000345|20210308
-      0000000123|John Doe                      |0000000001|0000000002|00000670|20210308
-      0000000456|Jane Smith                    |0000000002|0000000003|00003400|20220310
-    DATA
-  end
-
-  let(:tempfile) do
-    Tempfile.new('test_file').tap do |f|
-      f.write(file_content)
-      f.rewind
-    end
-  end
-
-  let(:file) { tempfile }
+  let(:file_path) { Rails.root.join('spec', 'fixtures', 'files', 'data2.txt') }
+  let(:file) { File.open(file_path) }
 
   let(:filter_criteria_service) { instance_double('FilterCriteriaService') }
 
@@ -26,8 +12,7 @@ RSpec.describe ProcessFileService do
   end
 
   after do
-    tempfile.close
-    tempfile.unlink
+    file.close
   end
 
   context 'when file is not present' do
@@ -42,23 +27,22 @@ RSpec.describe ProcessFileService do
       result = described_class.call(file)
 
       expect(result).to be_an(Array)
-      expect(result.size).to eq(2) # 2 users
-      expect(result.first[:orders].first[:products].size).to eq(2)
+      expect(result.size).to eq(200) # 2 users expected
+      expect(result.first[:orders].first[:products].size).to eq(2) # John Doe tem 2 produtos no pedido
     end
   end
 
-  context 'with filter matching only one line' do
+  context 'with filter matching only one user' do
     it 'returns only filtered data' do
       allow(filter_criteria_service).to receive(:matches?) do |line|
-      line[:user_id] == 123
-    end
-
+        line[:user_id] == 123
+      end
 
       result = described_class.call(file)
 
       expect(result.size).to eq(1)
       expect(result.first[:user_id]).to eq(123)
-      expect(result.first[:orders].size).to eq(1)
+      expect(result.first[:orders].size).to eq(3)
     end
   end
 
